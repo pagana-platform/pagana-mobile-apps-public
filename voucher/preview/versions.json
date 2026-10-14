@@ -1,0 +1,20 @@
+{
+  "appId": "voucher-preview",
+  "updatedAt": "2026-10-13T22:30:00.000Z",
+  "platforms": {
+    "ios": {
+      "latestVersion": "1.1.0",
+      "minimumVersion": "1.0.0",
+      "forceUpdate": false,
+      "message": "Uma nova versão do Elo (HML) está disponível no TestFlight.",
+      "storeUrl": "https://apps.apple.com/br/app/id6804680724"
+    },
+    "android": {
+      "latestVersion": "1.1.0",
+      "minimumVersion": "1.0.0",
+      "forceUpdate": false,
+      "message": "Uma nova versão do Elo (HML) está disponível.",
+      "storeUrl": "https://play.google.com/store/apps/details?id=com.pagana.eloapp"
+    }
+  }
+}
