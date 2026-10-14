@@ -1,4 +1,4 @@
-# mobile-apps-public
+# pagana-mobile-apps-public
 
 Políticas de versão dos apps mobile da Pagana, publicadas num repositório público para que o gate de versão dos apps consiga lê-las sem autenticação.
 
@@ -26,14 +26,14 @@ Um arquivo por app e por ambiente. Hoje:
 
 | App       | Ambiente   | Arquivo                          | Quem escreve                     |
 | --------- | ---------- | -------------------------------- | -------------------------------- |
-| `voucher` | production | `voucher/production/versions.json` | Serviço (GitHubApiWriter)        |
-| `voucher` | preview    | `voucher/preview/versions.json`    | Manual (apenas para testes/HML)  |
+| `voucher` | production | `voucher/production/versions.json` | Serviço (GitHubApiWriter); `appId: voucher-prod`    |
+| `voucher` | preview    | `voucher/preview/versions.json`    | Manual (apenas para testes/HML); `appId: voucher-preview` |
 
 ## Formato do `versions.json`
 
 ```json
 {
-  "appId": "voucher",
+  "appId": "voucher-prod",
   "updatedAt": "2026-09-03T20:26:37.667Z",
   "platforms": {
     "ios": {
@@ -56,8 +56,8 @@ Um arquivo por app e por ambiente. Hoje:
 
 | Campo            | Descrição                                                                 |
 | ---------------- | ------------------------------------------------------------------------- |
-| `appId`          | Identificador do app. Deve ser igual ao `VERSION_GATE_APP_ID` do app.     |
-| `latestVersion`  | Última versão publicada na loja.                                          |
+| `appId`          | Deve ser igual ao `VERSION_GATE_APP_ID` do build (`voucher-prod` em production, `voucher-preview` em preview). |
+| `latestVersion`  | Última versão publicada na loja, sempre `major.minor.patch`.              |
 | `minimumVersion` | Versão mínima aceita.                                                     |
 | `forceUpdate`    | Ver semântica abaixo.                                                     |
 | `message`        | Texto exibido no modal.                                                   |
@@ -77,7 +77,7 @@ A fonte da verdade é o `APPS_CONFIG` do serviço, não os arquivos deste reposi
 
 **Mudança de emergência** (exigir uma versão mínima mais alta):
 
-1. Altere `minimumVersion` do app/plataforma no `APPS_CONFIG`.
+1. Altere `minimumVersion` do app/plataforma no `MOBILE_VERSION_GATE_APPS_CONFIG` do serviço `mobile-version-gate` (srv-integrations). Ela não pode ser maior que a versão publicada na loja.
 2. Rode o serviço com `--once` para publicar imediatamente.
 3. Confirme o commit neste repositório.
 
@@ -85,10 +85,21 @@ A fonte da verdade é o `APPS_CONFIG` do serviço, não os arquivos deste reposi
 
 ## Configuração no app
 
+Production (EAS environment `production`):
+
 ```
-VERSION_GATE_URL=https://raw.githubusercontent.com/pagana-platform/mobile-apps-public/refs/heads/main/voucher/production/versions.json
-VERSION_GATE_APP_ID=voucher
+VERSION_GATE_URL=https://raw.githubusercontent.com/pagana-platform/pagana-mobile-apps-public/refs/heads/main/voucher/production/versions.json
+VERSION_GATE_APP_ID=voucher-prod
 ```
+
+Preview / HML (EAS environment `preview`):
+
+```
+VERSION_GATE_URL=https://raw.githubusercontent.com/pagana-platform/pagana-mobile-apps-public/refs/heads/main/voucher/preview/versions.json
+VERSION_GATE_APP_ID=voucher-preview
+```
+
+Sem `VERSION_GATE_URL` o gate fica desligado e o app abre normalmente.
 
 ## Limitações conhecidas
 
